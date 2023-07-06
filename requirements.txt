@@ -15,7 +15,7 @@ lxml
 json-tricks>3.0
 seaborn
 matplotlib
-beautifulsoup4==4.5.3
+beautifulsoup4>=4.5.3
 nbsphinx
 bcbio-gff
 biopandas
