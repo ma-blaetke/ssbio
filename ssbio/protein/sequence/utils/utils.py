@@ -1,6 +1,5 @@
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from Bio.Alphabet import IUPAC
 
 
 def cast_to_str(obj):
@@ -24,13 +23,11 @@ def cast_to_str(obj):
         raise ValueError('Must provide a string, Seq, or SeqRecord object.')
 
 
-def cast_to_seq(obj, alphabet=IUPAC.extended_protein):
+def cast_to_seq(obj):
     """Return a Seq representation of a string or SeqRecord object.
 
     Args:
         obj (str, Seq, SeqRecord): Sequence string or Biopython SeqRecord object
-        alphabet: See Biopython SeqRecord docs
-
     Returns:
         Seq: Seq representation of the sequence
 
@@ -42,12 +39,12 @@ def cast_to_seq(obj, alphabet=IUPAC.extended_protein):
         return obj.seq
     if isinstance(obj, str):
         obj = obj.upper()
-        return Seq(obj, alphabet)
+        return Seq(obj)
     else:
         raise ValueError('Must provide a string, Seq, or SeqRecord object.')
 
 
-def cast_to_seq_record(obj, alphabet=IUPAC.extended_protein, id="<unknown id>", name="<unknown name>",
+def cast_to_seq_record(obj, id="<unknown id>", name="<unknown name>",
                        description="<unknown description>", dbxrefs=None,
                        features=None, annotations=None,
                        letter_annotations=None):
@@ -55,7 +52,6 @@ def cast_to_seq_record(obj, alphabet=IUPAC.extended_protein, id="<unknown id>", 
 
     Args:
         obj (str, Seq, SeqRecord): Sequence string or Biopython Seq object
-        alphabet: See Biopython SeqRecord docs
         id: See Biopython SeqRecord docs
         name: See Biopython SeqRecord docs
         description: See Biopython SeqRecord docs
@@ -75,6 +71,6 @@ def cast_to_seq_record(obj, alphabet=IUPAC.extended_protein, id="<unknown id>", 
         return SeqRecord(obj, id, name, description, dbxrefs, features, annotations, letter_annotations)
     if isinstance(obj, str):
         obj = obj.upper()
-        return SeqRecord(Seq(obj, alphabet), id, name, description, dbxrefs, features, annotations, letter_annotations)
+        return SeqRecord(Seq(obj), id, name, description, dbxrefs, features, annotations, letter_annotations)
     else:
         raise ValueError('Must provide a string, Seq, or SeqRecord object.')

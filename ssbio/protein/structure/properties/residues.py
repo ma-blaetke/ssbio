@@ -7,7 +7,6 @@ import logging
 from collections import defaultdict
 from copy import deepcopy
 
-from Bio.Alphabet import IUPAC
 from Bio.PDB import Polypeptide
 from Bio.PDB.HSExposure import ExposureCN, HSExposureCA, HSExposureCB
 from Bio.Seq import Seq
@@ -213,7 +212,7 @@ def get_structure_seqrecords(model):
             else:
                 continue
 
-        chain_seq_record = SeqRecord(Seq(chain_seq, IUPAC.protein), id=chain.get_id())
+        chain_seq_record = SeqRecord(Seq(chain_seq), id=chain.get_id())
         chain_seq_record.letter_annotations['structure_resnums'] = chain_resnums
         structure_seq_records.append(chain_seq_record)
 

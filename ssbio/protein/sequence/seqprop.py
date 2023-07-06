@@ -620,7 +620,7 @@ class SeqProp(SeqRecord):
             >>> new_sp.letter_annotations[pk]
             [1, 0]
             >>> new_sp
-            SeqProp(seq=Seq('LE', ExtendedIUPACProtein()), id='tester_a_key_<_2_extracted', name='<unknown name>', description='<unknown description>', dbxrefs=[])
+            SeqProp(seq=Seq('LE'), id='tester_a_key_<_2_extracted', name='<unknown name>', description='<unknown description>', dbxrefs=[])
 
         Args:
             property_key (str): Property key in the ``letter_annotations`` attribute that you want to filter using

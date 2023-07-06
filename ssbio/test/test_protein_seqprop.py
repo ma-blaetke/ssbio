@@ -4,7 +4,6 @@ import ssbio.utils
 from Bio import SeqIO
 from BCBio import GFF
 from Bio.Seq import Seq
-from Bio.Alphabet import IUPAC
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from ssbio.protein.sequence.seqprop import SeqProp
@@ -17,8 +16,7 @@ def seq_str_example():
 @pytest.fixture(scope='class')
 def seq_record_example():
     """Dummy SeqRecord to load"""
-    return SeqRecord(Seq("MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF",
-                     IUPAC.protein),
+    return SeqRecord(Seq("MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF"),
                      id="YP_025292.1", name="HokC",
                      description="toxic membrane protein, small",
                      annotations={'hello':'world'})

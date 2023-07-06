@@ -3,7 +3,6 @@ import os.path as op
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from Bio.Alphabet import IUPAC
 from BCBio import GFF
 from ssbio.databases.kegg import KEGGProp
 
