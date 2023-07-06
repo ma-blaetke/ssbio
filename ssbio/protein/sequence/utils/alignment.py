@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 from Bio import AlignIO
 from Bio import pairwise2
+from Bio import SubsMat
 from Bio.Align import MultipleSeqAlignment
 from Bio.SubsMat import MatrixInfo as matlist
 import ssbio.utils
