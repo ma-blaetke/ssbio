@@ -15,6 +15,7 @@ from Bio import AlignIO
 from Bio import pairwise2
 from Bio import SubsMat
 from Bio.Align import MultipleSeqAlignment
+from Bio.Align import substitution_matrices
 from Bio.SubsMat import MatrixInfo as matlist
 import ssbio.utils
 import ssbio.protein.sequence.utils
@@ -66,7 +67,7 @@ def pairwise_sequence_alignment(a_seq, b_seq, engine, a_seq_id=None, b_seq_id=No
         # TODO: how to define gap open/extend when using matrix in biopython global alignment?
         log.warning('Gap penalties not implemented in Biopython yet')
 
-        blosum62 = matlist.blosum62
+        blosum62 = substitution_matrices.load("BLOSUM62")
         alignments = pairwise2.align.globaldx(a_seq, b_seq, blosum62)  # TODO: add gap penalties
         best_alignment = alignments[0]
 
