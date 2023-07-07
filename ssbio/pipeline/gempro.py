@@ -985,7 +985,7 @@ class GEMPRO(Object):
                     uniprot_id = uniprot_id.split('-')[0]
                 all_representative_uniprots.append(uniprot_id)
         log.info('Mapping UniProt IDs --> PDB IDs...')
-        uniprots_to_pdbs = bs_unip.mapping(fr='ACC', to='PDB_ID', query=all_representative_uniprots)
+        uniprots_to_pdbs = bs_unip.mapping(fr='accession', to='xref_pdb', query=all_representative_uniprots)
 
         counter = 0
         # Now run the best_structures API for all genes
