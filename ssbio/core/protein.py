@@ -930,8 +930,9 @@ class Protein(Object):
                     infodict['pdb_chain_id'] = c.id
                     blast_results_pre_df.append(infodict)
 
-        cols = ['pdb_id', 'pdb_chain_id', 'hit_score', 'hit_evalue', 'hit_percent_similar',
-                'hit_percent_ident', 'hit_percent_gaps', 'hit_num_ident', 'hit_num_similar', 'hit_num_gaps']
+        cols = ['pdb_id', 'pdb_chain_id', 'hit_score']
+        #cols = ['pdb_id', 'pdb_chain_id', 'hit_score', 'hit_evalue', 'hit_percent_similar',
+        #        'hit_percent_ident', 'hit_percent_gaps', 'hit_num_ident', 'hit_num_similar', 'hit_num_gaps']
         df = pd.DataFrame.from_records(blast_results_pre_df, columns=cols).set_index('pdb_id')
         return ssbio.utils.clean_df(df)
 

@@ -1,6 +1,7 @@
 from os import path as op
 
 import requests
+import json
 from lxml import etree
 
 import ssbio.utils
@@ -30,81 +31,44 @@ def blast_pdb(seq, outfile='', outdir='', evalue=0.0001, seq_ident_cutoff=0.0, l
         page = 'PDB results page: http://www.rcsb.org/pdb/rest/getBlastPDB1?sequence={}&eCutOff={}&maskLowComplexity=yes&matrix=BLOSUM62&outputFormat=HTML'.format(seq, evalue)
         print(page)
 
-    parser = etree.XMLParser(ns_clean=True)
+    #parser = etree.XMLParser(ns_clean=True)
 
     outfile = op.join(outdir, outfile)
     if ssbio.utils.force_rerun(force_rerun, outfile):
         # Load the BLAST XML results if force_rerun=True
-        page = 'http://www.rcsb.org/pdb/rest/getBlastPDB1?sequence={}&eCutOff={}&maskLowComplexity=yes&matrix=BLOSUM62&outputFormat=XML'.format(
-                        seq, evalue)
+        page = f"https://search.rcsb.org/rcsbsearch/v2/query?json=%7B%22query%22%3A%7B%22type%22%3A%22terminal%22%2C%22service%22%3A%22sequence%22%2C%22parameters%22%3A%7B%22evalue_cutoff%22%3A{evalue}%2C%22identity_cutoff%22%3A{seq_ident_cutoff}%2C%22sequence_type%22%3A%22protein%22%2C%22value%22%3A%22{seq}%22%7D%7D%2C%22request_options%22%3A%7B%22scoring_strategy%22%3A%22sequence%22%7D%2C%22return_type%22%3A%22polymer_instance%22%7D"
+    
         req = requests.get(page)
         if req.status_code == 200:
-            response = req.text
+            response = req.json()['result_set']
 
             # Save the XML file
             if outfile:
                 with open(outfile, 'w') as f:
-                    f.write(response)
+                    json.dump(response, f)
 
             # Parse the XML string
-            tree = etree.ElementTree(etree.fromstring(response, parser))
-            log.debug('Loaded BLAST results from REST server')
+            #tree = etree.ElementTree(etree.fromstring(response, parser))
+            #log.debug('Loaded BLAST results from REST server')
         else:
             log.error('BLAST request timed out')
             return []
     else:
-        tree = etree.parse(outfile, parser)
-        log.debug('{}: Loaded existing BLAST XML results'.format(outfile))
+        #tree = etree.parse(outfile, parser)
+        with open(outfile, 'r') as f:
+            response = json.load(f)
 
-    # Get length of original sequence to calculate percentages
-    len_orig = float(len(seq))
+        log.debug('{}: Loaded existing BLAST results'.format(outfile))
 
-    root = tree.getroot()
     hit_list = []
 
-    for hit in root.findall('BlastOutput_iterations/Iteration/Iteration_hits/Hit'):
+    for hit in response:
+
         info = {}
 
-        hitdef = hit.find('Hit_def')
-        if hitdef is not None:
-            info['hit_pdb'] = hitdef.text.split('|')[0].split(':')[0].lower()
-            info['hit_pdb_chains'] = hitdef.text.split('|')[0].split(':')[2].split(',')
-
-        # One PDB can align to different parts of the sequence
-        # Will just choose the top hit for this single PDB
-        hsp = hit.findall('Hit_hsps/Hsp')[0]
-
-        # Number of identical residues
-        hspi = hsp.find('Hsp_identity')
-        if hspi is not None:
-            info['hit_num_ident'] = int(hspi.text)
-            info['hit_percent_ident'] = int(hspi.text)/len_orig
-
-            if int(hspi.text)/len_orig < seq_ident_cutoff:
-                log.debug('{}: does not meet sequence identity cutoff'.format(hitdef.text.split('|')[0].split(':')[0]))
-                continue
-
-        # Number of similar residues (positive hits)
-        hspp = hsp.find('Hsp_positive')
-        if hspp is not None:
-            info['hit_num_similar'] = int(hspp.text)
-            info['hit_percent_similar'] = int(hspp.text) / len_orig
-
-        # Total number of gaps (unable to align in either query or subject)
-        hspg = hsp.find('Hsp_gaps')
-        if hspg is not None:
-            info['hit_num_gaps'] = int(hspg.text)
-            info['hit_percent_gaps'] = int(hspg.text) / len_orig
-
-        # E-value of BLAST
-        hspe = hsp.find('Hsp_evalue')
-        if hspe is not None:
-            info['hit_evalue'] = float(hspe.text)
-
-        # Score of BLAST
-        hsps = hsp.find('Hsp_score')
-        if hsps is not None:
-            info['hit_score'] = float(hsps.text)
+        info['hit_pdb'] = hit['identifier']
+        info['hit_pdb_chains'] = hit['identifier']
+        info['hit_score'] = hit['score']
 
         hit_list.append(info)
 
