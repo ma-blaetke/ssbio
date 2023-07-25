@@ -994,7 +994,7 @@ class GEMPRO(Object):
             if uniprot_id:
                 if '-' in uniprot_id:
                     uniprot_id = uniprot_id.split('-')[0]
-                if uniprot_id in uniprots_to_pdbs:
+                if not uniprot_id in uniprots_to_pdbs['failedIds']:
                     best_structures = g.protein.map_uniprot_to_pdb(seq_ident_cutoff=seq_ident_cutoff, outdir=outdir, force_rerun=force_rerun)
                     if best_structures:
                         counter += 1
